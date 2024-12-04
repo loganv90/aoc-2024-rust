@@ -1,6 +1,5 @@
 use std::fs;
 use std::env;
-use std::collections::HashMap;
 use crate::Day;
 
 pub struct Day02 {}
@@ -26,63 +25,83 @@ impl Day for Day02 {
 fn part1(contents: String) {
     let lines = contents.lines();
 
-    let mut left_list = vec![];
-    let mut right_list = vec![];
-
+    let mut safe_count = 0;
     for line in lines {
-        let line_split = line.split(" ").filter(|x| x.len() > 0).collect::<Vec<&str>>();
-        if line_split.len() != 2 {
-            panic!("Invalid input");
+        let line_split = line
+            .split(" ")
+            .filter(|x| x.len() > 0)
+            .map(|x| x.parse::<i64>().unwrap())
+            .collect::<Vec<i64>>();
+
+        if safe(&line_split) {
+            safe_count += 1;
         }
-
-        let left_num = line_split[0].parse::<i64>().unwrap();
-        left_list.push(left_num);
-
-        let right_num = line_split[1].parse::<i64>().unwrap();
-        right_list.push(right_num);
     }
 
-    left_list.sort();
-    right_list.sort();
+    println!("Part 1: {}", safe_count);
+}
 
-    let mut diff = 0;
-    for i in 0..left_list.len() {
-        let left_num = left_list[i];
-        let right_num = right_list[i];
+fn safe(l: &Vec<i64>) -> bool {
+    let increasing = l[0] < l[1];
+    let mut prev = l[0];
 
-        diff += (left_num - right_num).abs();
+    let mut i = 1;
+    while i < l.len() {
+        let curr = l[i];
+        let diff = (prev - curr).abs();
+        if increasing != (prev < curr) || diff > 3 || diff < 1 {
+            return false;
+        }
+        prev = curr;
+        i += 1;
     }
 
-    println!("Part 1: {}", diff);
+    return true;
 }
 
 fn part2(contents: String) {
     let lines = contents.lines();
 
-    let mut left_list = vec![];
-    let mut right_map = HashMap::new();
-
+    let mut safe_count = 0;
     for line in lines {
-        let line_split = line.split(" ").filter(|x| x.len() > 0).collect::<Vec<&str>>();
-        if line_split.len() != 2 {
-            panic!("Invalid input");
-        }
+        let mut line_split = line
+            .split(" ")
+            .filter(|x| x.len() > 0)
+            .map(|x| x.parse::<i64>().unwrap())
+            .collect::<Vec<i64>>();
 
-        let left_num = line_split[0].parse::<i64>().unwrap();
-        left_list.push(left_num);
+        let safe = remove_one_safe(&line_split);
+        line_split.reverse();
+        let safe2 = remove_one_safe(&line_split);
 
-        let right_num = line_split[1].parse::<i64>().unwrap();
-        match right_map.get(&right_num) {
-            Some(cur) => { right_map.insert(right_num, cur + 1); },
-            None => { right_map.insert(right_num, 1); },
+        if safe || safe2 {
+            safe_count += 1;
         }
     }
 
-    let mut res = 0;
-    for left in left_list {
-        res += right_map.get(&left).unwrap_or(&0) * left;
+    println!("Part 1: {}", safe_count);
+}
+
+fn remove_one_safe(l: &Vec<i64>) -> bool {
+    let increasing = l[0] < l[1];
+    let mut skip = false;
+    let mut prev = l[0];
+
+    let mut i = 1;
+    while i < l.len() {
+        let curr = l[i];
+        let diff = (prev - curr).abs();
+        if increasing != (prev < curr) || diff > 3 || diff < 1 {
+            if skip {
+                return false;
+            }
+            skip = true;
+        } else {
+            prev = curr;
+        }
+        i += 1;
     }
 
-    println!("Part 2: {}", res);
+    return true;
 }
 
