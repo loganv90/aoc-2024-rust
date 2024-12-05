@@ -1,5 +1,6 @@
 pub mod day01;
 pub mod day02;
+pub mod day03;
 
 trait Day {
     fn execute(&self);
@@ -29,6 +30,7 @@ fn main() {
     let days: Vec<Box<dyn Day>> = vec![
         Box::new(crate::day01::solution::Day01 {}),
         Box::new(crate::day02::solution::Day02 {}),
+        Box::new(crate::day03::solution::Day03 {}),
     ];
 
     let day = &days[(day_int - 1) as usize];

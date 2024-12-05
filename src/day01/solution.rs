@@ -7,7 +7,7 @@ pub struct Day01 {}
 
 impl Day for Day01 {
     fn execute(&self) {
-        println!("Day 1");
+        println!("Day01");
 
         let base_path = env::current_dir().unwrap();
         let mut test1_path = base_path.clone();
