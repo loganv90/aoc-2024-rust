@@ -2,6 +2,7 @@ pub mod day01;
 pub mod day02;
 pub mod day03;
 pub mod day04;
+pub mod day05;
 
 trait Day {
     fn execute(&self);
@@ -33,6 +34,7 @@ fn main() {
         Box::new(crate::day02::solution::Day02 {}),
         Box::new(crate::day03::solution::Day03 {}),
         Box::new(crate::day04::solution::Day04 {}),
+        Box::new(crate::day05::solution::Day05 {}),
     ];
 
     let day = &days[(day_int - 1) as usize];
